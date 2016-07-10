@@ -42,7 +42,7 @@ class MpUpnpPvrContainerResource(MpUpnpResource):
 "MpUpnpPvrContainerResource" represents an database UPnP PVR container
 entry.
 s
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: pvr
@@ -55,7 +55,7 @@ s
 	"""
 SQLAlchemy table name
 	"""
-	db_instance_class = "dNG.pas.data.upnp.resources.MpEntryPvrContainer"
+	db_instance_class = "dNG.data.upnp.resources.MpEntryPvrContainer"
 	"""
 Encapsulating SQLAlchemy database instance class name
 	"""

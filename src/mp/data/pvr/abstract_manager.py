@@ -31,22 +31,22 @@ https://www.direct-netware.de/redirect?licenses;gpl
 #echo(__FILEPATH__)#
 """
 
-from time import time
-
-from dNG.pas.data.upnp.resources.mp_entry_pvr_container import MpEntryPvrContainer
-from dNG.pas.database.connection import Connection
-from dNG.pas.database.nothing_matched_exception import NothingMatchedException
-from dNG.pas.module.named_loader import NamedLoader
-from dNG.pas.runtime.instance_lock import InstanceLock
-from dNG.pas.runtime.not_implemented_exception import NotImplementedException
-from dNG.pas.runtime.value_exception import ValueException
+from dNG.data.upnp.resources.mp_entry_pvr_container import MpEntryPvrContainer
+from dNG.database.connection import Connection
+from dNG.database.nothing_matched_exception import NothingMatchedException
+from dNG.database.transaction_context import TransactionContext
+from dNG.module.named_loader import NamedLoader
+from dNG.runtime.instance_lock import InstanceLock
+from dNG.runtime.not_implemented_exception import NotImplementedException
+from dNG.runtime.thread_lock import ThreadLock
+from dNG.runtime.value_exception import ValueException
 
 class AbstractManager(object):
 #
 	"""
 "AbstractManager" defines abstract methods to implement a PVR manager.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: pvr
@@ -76,7 +76,11 @@ Constructor __init__(AbstractManager)
 :since: v0.1.00
 		"""
 
-		self.log_handler = NamedLoader.get_singleton("dNG.pas.data.logging.LogHandler", False)
+		self._lock = ThreadLock()
+		"""
+Thread safety lock
+		"""
+		self.log_handler = NamedLoader.get_singleton("dNG.data.logging.LogHandler", False)
 		"""
 The LogHandler is called whenever debug messages should be logged or errors
 happened.
@@ -91,6 +95,47 @@ Cached UPnP PVR root container instance
 		"""
 	#
 
+	@Connection.wrap_callable
+	def _ensure_root_container(self):
+	#
+		"""
+Returns the PVR container holding recordings.
+
+:return: (object) UPnP PVR container resource
+:since:  v0.1.00
+		"""
+
+		if (self.root_container is None):
+		#
+			with self._lock:
+			# Thread safety
+				if (self.root_container is None):
+				#
+					try: self.root_container = MpEntryPvrContainer.load_manager_root_container(self.get_manager_id())
+					except NothingMatchedException:
+					#
+						container = MpEntryPvrContainer()
+						name = self.get_name()
+
+						container_data = { "title": name,
+						                   "vfs_url": "{0}:///".format(self.get_vfs_scheme()),
+						                   "vfs_type": MpEntryPvrContainer.VFS_TYPE_DIRECTORY,
+						                   "role_id": "upnp_root_container",
+						                   "resource_title": name,
+						                   "manager_id": self.get_manager_id()
+						                 }
+
+						container.set_data_attributes(**container_data)
+						container.set_as_main_entry()
+						container.save()
+
+						self.root_container = container
+					#
+				#
+			#
+		#
+	#
+
 	def get_container(self):
 	#
 		"""
@@ -100,7 +145,7 @@ Returns the PVR container holding recordings.
 :since:  v0.1.00
 		"""
 
-		if (self.root_container is None): self.root_container = MpEntryPvrContainer.load_manager_root_container(self.get_manager_id())
+		self._ensure_root_container()
 		return self.root_container
 	#
 
@@ -130,6 +175,21 @@ Returns the PVR manager instance name.
 		return self.name
 	#
 
+	def get_vfs_scheme(self):
+	#
+		"""
+Returns the PVR manager VFS scheme.
+
+:return: (str) PVR manager VFS scheme
+:since:  v0.1.00
+		"""
+
+		return "x-{0}".format(NamedLoader.RE_CAMEL_CASE_SPLITTER
+		                      .sub("\\1-\\2", self.get_manager_id())
+		                      .lower()
+		                     )
+	#
+
 	def start(self, params = None, last_return = None):
 	#
 		"""
@@ -142,25 +202,7 @@ Starts the activity of this manager.
 :since:  v0.1.00
 		"""
 
-		with Connection.get_instance():
-		#
-			try: container = self.get_container()
-			except NothingMatchedException:
-			#
-				container = MpEntryPvrContainer()
-				name = self.get_name()
-
-				container_data = { "title": name,
-				                   "cds_type": MpEntryPvrContainer.DB_CDS_TYPE_ROOT,
-				                   "resource_title": name,
-				                   "manager_id": self.get_id()
-				                 }
-
-				container.set_data_attributes(**container_data)
-				container.set_as_main_entry()
-				container.save()
-			#
-		#
+		self._ensure_root_container()
 
 		return last_return
 	#

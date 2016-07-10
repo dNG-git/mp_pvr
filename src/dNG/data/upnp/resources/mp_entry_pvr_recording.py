@@ -31,10 +31,10 @@ https://www.direct-netware.de/redirect?licenses;gpl
 #echo(__FILEPATH__)#
 """
 
+from dNG.data.binary import Binary
 from dNG.data.rfc.basics import Basics
-from dNG.pas.data.binary import Binary
-from dNG.pas.data.upnp.resources.abstract_stream import AbstractStream
-from dNG.pas.database.instances.mp_upnp_pvr_recording_resource import MpUpnpPvrRecordingResource as _DbMpUpnpPvrRecordingResource
+from dNG.database.instances.mp_upnp_pvr_recording_resource import MpUpnpPvrRecordingResource as _DbMpUpnpPvrRecordingResource
+
 from .mp_entry_video import MpEntryVideo
 
 class MpEntryPvrRecording(MpEntryVideo):
@@ -42,7 +42,7 @@ class MpEntryPvrRecording(MpEntryVideo):
 	"""
 "MpEntryPvrRecording" is used for UPnP PVR recording database entries.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: pvr
@@ -152,16 +152,16 @@ client.
 Returns the UPnP resource type.
 
 :return: (str) UPnP resource type; None if empty
-:since:  v0.1.01
+:since:  v0.1.00
 		"""
 
 		_return = self.type
 
 		if (_return is None):
 		#
-			entry_data = self.get_data_attributes("cds_type")
+			entry_data = self.get_data_attributes("vfs_type")
 
-			if (entry_data['cds_type'] == _DbMpUpnpPvrRecordingResource.CDS_TYPE_ITEM):
+			if (entry_data['vfs_type'] == MpEntryPvrRecording.VFS_TYPE_ITEM):
 			#
 				_return = (MpEntryPvrRecording.TYPE_CDS_ITEM
 				           | MpEntryPvrRecording.TYPE_CDS_ITEM_PVR_VIDEO
@@ -203,67 +203,6 @@ Returns the UPnP resource type class.
 
 		if (_return is None): _return = MpEntryVideo.get_type_class(self)
 		return _return
-	#
-
-	def _init_item_content(self):
-	#
-		"""
-Initializes the content of an UPnP CDS item entry.
-
-:return: (bool) True if successful
-:since:  v0.1.00
-		"""
-
-		_return = True
-
-		resource_stream = self._get_stream_resource()
-
-		if (resource_stream is not None):
-		#
-			resource_stream.set_mimeclass(self.get_mimeclass())
-			resource_stream.set_mimetype(self.get_mimetype())
-
-			resource_stream.set_parent_resource_id(self.get_resource_id())
-
-			size = self.get_size()
-			if (size is not None and isinstance(resource_stream, AbstractStream)): resource_stream.set_size(size)
-
-			resource_stream.init_cds_id(self.get_encapsulated_id(), self.client_user_agent)
-
-			self.content = [ resource_stream ]
-		#
-		elif (self.log_handler is not None):
-		#
-			_return = False
-			self.log_handler.warning("mp.MpEntry failed to load resource stream for ID '{0}'", self.resource_id, context = "mp_server")
-		#
-
-		return _return
-	#
-
-	def refresh_metadata(self):
-	#
-		"""
-Refresh metadata associated with this MpEntryVideo.
-
-:since: v0.1.00
-		"""
-
-		MpEntryVideo.refresh_metadata(self)
-
-		if (self.type & MpEntryPvrRecording.TYPE_CDS_ITEM == MpEntryPvrRecording.TYPE_CDS_ITEM
-		    and self.get_data_attributes("refreshable")
-		   ):
-		#
-			resource_stream = self.get_content(0)
-			url = (None if (resource_stream is None) else Binary.str(resource_stream.get_content(0)))
-
-			if (type(url) is str):
-			#
-				self._refresh_video_metadata(url)
-				self.set_data_attributes(size = resource_stream.get_size())
-			#
-		#
 	#
 
 	def set_data_attributes(self, **kwargs):

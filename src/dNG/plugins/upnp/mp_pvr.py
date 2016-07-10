@@ -33,22 +33,22 @@ https://www.direct-netware.de/redirect?licenses;gpl
 
 # pylint: disable=unused-argument
 
-from dNG.pas.data.upnp.resources.mp_entry_pvr_container import MpEntryPvrContainer
-from dNG.pas.database.condition_definition import ConditionDefinition
-from dNG.pas.runtime.exception_log_trap import ExceptionLogTrap
-from dNG.pas.plugins.hook import Hook
-from dNG.pas.runtime.value_exception import ValueException
+from dNG.data.upnp.resources.mp_entry_pvr_container import MpEntryPvrContainer
+from dNG.database.condition_definition import ConditionDefinition
+from dNG.plugins.hook import Hook
+from dNG.runtime.exception_log_trap import ExceptionLogTrap
+from dNG.runtime.value_exception import ValueException
 
 def apply_value_derived_db_condition(params, last_return = None):
 #
 	"""
-Called for "dNG.mp.upnp.MpResource.applyValueDerivedDbCondition"
+Called for "mp.upnp.MpResource.applyValueDerivedDbCondition"
 
 :param params: Parameter specified
 :param last_return: The return value from the last hook called.
 
 :return: (mixed) Return value
-:since:  v0.1.02
+:since:  v0.1.00
 	"""
 
 	if ("condition_definition" not in params
@@ -85,7 +85,7 @@ Called for "dNG.pas.upnp.ControlPoint.onShutdown"
 :since: v0.1.00
 	"""
 
-	pvr_managers = Hook.call("dNG.mp.pvr.Manager.getSingletons")
+	pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
 
 	if (type(pvr_managers) is list):
 	#
@@ -109,7 +109,7 @@ Called for "dNG.pas.upnp.ControlPoint.onStartup"
 :since: v0.1.00
 	"""
 
-	pvr_managers = Hook.call("dNG.mp.pvr.Manager.getSingletons")
+	pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
 
 	if (type(pvr_managers) is list):
 	#
@@ -132,7 +132,8 @@ Register plugin hooks.
 
 	Hook.register("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
 	Hook.register("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
-	Hook.register("dNG.mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
+
+	Hook.register("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
 #
 
 def unregister_plugin():
@@ -145,7 +146,8 @@ Unregister plugin hooks.
 
 	Hook.unregister("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
 	Hook.unregister("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
-	Hook.unregister("dNG.mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
+
+	Hook.unregister("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
 #
 
 ##j## EOF

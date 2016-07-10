@@ -31,13 +31,14 @@ https://www.direct-netware.de/redirect?licenses;gpl
 #echo(__FILEPATH__)#
 """
 
-from sqlalchemy.sql.expression import or_
+from sqlalchemy.sql.expression import and_
 
-from dNG.pas.database.connection import Connection
-from dNG.pas.database.nothing_matched_exception import NothingMatchedException
-from dNG.pas.database.sort_definition import SortDefinition
-from dNG.pas.database.instances.mp_upnp_pvr_container_resource import MpUpnpPvrContainerResource as _DbMpUpnpPvrContainerResource
-from dNG.pas.database.instances.mp_upnp_pvr_recording_resource import MpUpnpPvrRecordingResource as _DbMpUpnpPvrRecordingResource
+from dNG.database.connection import Connection
+from dNG.database.instances.mp_upnp_pvr_container_resource import MpUpnpPvrContainerResource as _DbMpUpnpPvrContainerResource
+from dNG.database.instances.mp_upnp_pvr_recording_resource import MpUpnpPvrRecordingResource as _DbMpUpnpPvrRecordingResource
+from dNG.database.nothing_matched_exception import NothingMatchedException
+from dNG.database.sort_definition import SortDefinition
+
 from .mp_entry import MpEntry
 
 class MpEntryPvrContainer(MpEntry):
@@ -45,7 +46,7 @@ class MpEntryPvrContainer(MpEntry):
 	"""
 "MpEntryPvrContainer" is used for UPnP PVR container database entries.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: pvr
@@ -90,19 +91,19 @@ applied.
 :param db_query: Unmodified SQLAlchemy database query
 
 :return: (object) SQLAlchemy database query
-:since:  v0.1.03
+:since:  v0.1.00
 		"""
 
 		_return = db_query
 
 		client_settings = self.get_client_settings()
 
-		if (self.type & MpEntry.TYPE_CDS_CONTAINER == MpEntry.TYPE_CDS_CONTAINER
-		    and (not client_settings.get("upnp_pvr_scheduled_recording_supported", True))
+		if (self.type & MpEntryPvrContainer.TYPE_CDS_CONTAINER_PVR_VIDEO == MpEntryPvrContainer.TYPE_CDS_CONTAINER_PVR_VIDEO
+		    and (client_settings.get("upnp_pvr_scheduled_recording_supported", True))
 		   ):
-			_return = _return.filter(or_(_DbMpUpnpPvrContainerResource.identity != "MpUpnpPvrRecordingResource",
-			                             _DbMpUpnpPvrRecordingResource.mimeclass != "unknown"
-			                            )
+			_return = _return.filter(and_(_DbMpUpnpPvrContainerResource.identity == "MpUpnpPvrRecordingResource",
+			                              _DbMpUpnpPvrRecordingResource.mimeclass != "unknown"
+			                             )
 			                        )
 		#
 
@@ -122,7 +123,7 @@ Returns the default sort definition list.
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._get_default_sort_definition({1})- (#echo(__LINE__)#)", self, context, context = "pas_datalinker")
 
-		return (SortDefinition([ ( "cds_type", SortDefinition.ASCENDING ),
+		return (SortDefinition([ ( "vfs_type", SortDefinition.ASCENDING ),
 		                         ( "position", SortDefinition.ASCENDING ),
 		                         ( "time_sortable", SortDefinition.ASCENDING ),
 		                         ( "resource_title", SortDefinition.ASCENDING )
@@ -138,18 +139,16 @@ Returns the default sort definition list.
 Returns the UPnP resource type.
 
 :return: (str) UPnP resource type; None if empty
-:since:  v0.1.01
+:since:  v0.1.00
 		"""
 
 		_return = self.type
 
 		if (_return is None):
 		#
-			entry_data = self.get_data_attributes("cds_type")
+			entry_data = self.get_data_attributes("vfs_type")
 
-			if (entry_data['cds_type'] in ( _DbMpUpnpPvrContainerResource.CDS_TYPE_CONTAINER,
-			                                _DbMpUpnpPvrContainerResource.CDS_TYPE_ROOT
-			                              )
+			if (entry_data['vfs_type'] == MpEntryPvrContainer.VFS_TYPE_DIRECTORY
 			    and self.get_mimetype() == "text/x-directory-upnp-pvr-video"
 			   ):
 			#
@@ -239,8 +238,8 @@ resource's content list is modified.
 
 		client_settings = self.get_client_settings()
 
-		return (self.type & MpEntry.TYPE_CDS_CONTAINER == MpEntry.TYPE_CDS_CONTAINER
-		        and (not client_settings.get("upnp_pvr_scheduled_recording_supported", True))
+		return (self.get_type() & MpEntryPvrContainer.TYPE_CDS_CONTAINER_PVR_VIDEO == MpEntryPvrContainer.TYPE_CDS_CONTAINER_PVR_VIDEO
+		        and (client_settings.get("upnp_pvr_scheduled_recording_supported", True))
 		       )
 	#
 
@@ -265,7 +264,7 @@ Loads the root container of the given PVR manager ID.
 		with Connection.get_instance() as connection:
 		#
 			db_instance = (connection.query(_DbMpUpnpPvrContainerResource)
-			               .filter(_DbMpUpnpPvrContainerResource.cds_type == _DbMpUpnpPvrContainerResource.CDS_TYPE_ROOT,
+			               .filter(_DbMpUpnpPvrContainerResource.role_id == "upnp_root_container",
 			                       _DbMpUpnpPvrContainerResource.manager_id == manager_id
 			                      )
 			               .first()

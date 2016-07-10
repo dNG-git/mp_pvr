@@ -33,9 +33,9 @@ https://www.direct-netware.de/redirect?licenses;gpl
 
 # pylint: disable=unused-argument
 
-from dNG.pas.database.schema import Schema
-from dNG.pas.module.named_loader import NamedLoader
-from dNG.pas.plugins.hook import Hook
+from dNG.database.schema import Schema
+from dNG.module.named_loader import NamedLoader
+from dNG.plugins.hook import Hook
 
 def after_apply_schema(params, last_return = None):
 #
@@ -49,10 +49,10 @@ Called for "dNG.pas.Database.applySchema.after"
 :since:  v0.1.00
 	"""
 
-	container_class = NamedLoader.get_class("dNG.pas.database.instances.MpUpnpPvrContainerResource")
+	container_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
 	Schema.apply_version(container_class)
 
-	resource_class = NamedLoader.get_class("dNG.pas.database.instances.MpUpnpPvrRecordingResource")
+	resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
 	Schema.apply_version(resource_class)
 
 	return last_return
@@ -70,7 +70,7 @@ Called for "dNG.pas.Database.applySchema.before"
 :since:  v0.1.00
 	"""
 
-	resource_class = NamedLoader.get_class("dNG.pas.database.instances.MpUpnpPvrRecordingResource")
+	resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
 	if (resource_class is not None): resource_class.before_apply_schema()
 
 	return last_return
@@ -87,8 +87,8 @@ Load and register all SQLAlchemy objects to generate database tables.
 :since: v0.1.00
 	"""
 
-	NamedLoader.get_class("dNG.pas.database.instances.MpUpnpPvrContainerResource")
-	NamedLoader.get_class("dNG.pas.database.instances.MpUpnpPvrRecordingResource")
+	NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
+	NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
 
 	return last_return
 #

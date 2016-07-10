@@ -35,7 +35,8 @@ from sqlalchemy.event import listen
 from sqlalchemy.schema import Column, DDL, ForeignKey
 from sqlalchemy.types import INT, TEXT, VARCHAR
 
-from dNG.pas.database.types.date_time import DateTime
+from dNG.database.types.date_time import DateTime
+
 from .mp_upnp_video_resource import MpUpnpVideoResource
 
 class MpUpnpPvrRecordingResource(MpUpnpVideoResource):
@@ -44,7 +45,7 @@ class MpUpnpPvrRecordingResource(MpUpnpVideoResource):
 "MpUpnpPvrRecordingResource" represents an database UPnP PVR recording
 entry.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: pvr
@@ -57,7 +58,7 @@ entry.
 	"""
 SQLAlchemy table name
 	"""
-	db_instance_class = "dNG.pas.data.upnp.resources.MpEntryPvrRecording"
+	db_instance_class = "dNG.data.upnp.resources.MpEntryPvrRecording"
 	"""
 Encapsulating SQLAlchemy database instance class name
 	"""

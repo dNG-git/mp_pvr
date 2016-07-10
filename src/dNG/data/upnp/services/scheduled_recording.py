@@ -31,8 +31,9 @@ https://www.direct-netware.de/redirect?licenses;gpl
 #echo(__FILEPATH__)#
 """
 
-from dNG.pas.data.upnp.resource import Resource
-from dNG.pas.data.upnp.upnp_exception import UpnpException
+from dNG.data.upnp.resource import Resource
+from dNG.data.upnp.upnp_exception import UpnpException
+
 from .abstract_service import AbstractService
 from .feature_list_mixin import FeatureListMixin
 
@@ -46,7 +47,7 @@ class ScheduledRecording(FeatureListMixin, AbstractService):
 	"""
 Implementation for "urn:schemas-upnp-org:service:ScheduledRecording:1".
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  direct Netware Group - All rights reserved
 :package:    mp
 :subpackage: core
@@ -62,7 +63,7 @@ Implementation for "urn:schemas-upnp-org:service:ScheduledRecording:1".
 		"""
 Constructor __init__(ScheduledRecording)
 
-:since: v0.1.02
+:since: v0.1.00
 		"""
 
 		AbstractService.__init__(self)
