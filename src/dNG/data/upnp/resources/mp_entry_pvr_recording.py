@@ -73,7 +73,7 @@ Ongoing recording of a broadcast
     """
 Planned broadcast recording
     """
-    TYPE_CDS_ITEM_PVR_VIDEO = 512
+    TYPE_CDS_ITEM_PVR_VIDEO = 1 << 33
     """
 UPnP CDS PVR video type
     """

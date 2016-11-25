@@ -57,7 +57,7 @@ class MpEntryPvrContainer(MpEntry):
     """
 SQLAlchemy database instance class to initialize for new instances.
     """
-    TYPE_CDS_CONTAINER_PVR_VIDEO = 512
+    TYPE_CDS_CONTAINER_PVR_VIDEO = 1 << 32
     """
 UPnP CDS PVR video container type
     """
