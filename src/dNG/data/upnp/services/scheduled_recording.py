@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##j## BOF
 
 """
 MediaProvider
@@ -43,8 +42,7 @@ Remapped filter builtin
 """
 
 class ScheduledRecording(FeatureListMixin, AbstractService):
-#
-	"""
+    """
 Implementation for "urn:schemas-upnp-org:service:ScheduledRecording:1".
 
 :author:     direct Netware Group et al.
@@ -54,58 +52,54 @@ Implementation for "urn:schemas-upnp-org:service:ScheduledRecording:1".
 :since:      v0.1.00
 :license:    https://www.direct-netware.de/redirect?licenses;gpl
              GNU General Public License 2
-	"""
+    """
 
-	# pylint: disable=redefined-builtin,unused-argument
+    # pylint: disable=redefined-builtin,unused-argument
 
-	def __init__(self):
-	#
-		"""
+    def __init__(self):
+        """
 Constructor __init__(ScheduledRecording)
 
 :since: v0.1.00
-		"""
+        """
 
-		AbstractService.__init__(self)
-		FeatureListMixin.__init__(self)
-	#
+        AbstractService.__init__(self)
+        FeatureListMixin.__init__(self)
+    #
 
-	def get_sort_capabilities(self):
-	#
-		"""
+    def get_sort_capabilities(self):
+        """
 Returns the system-wide UPnP sort capabilities available.
 
 :return: (int) UPnP sort capabilities value
 :since:  v0.1.00
-		"""
+        """
 
-		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.get_sort_capabilities()- (#echo(__LINE__)#)", self, context = "mp_server")
-		_return = UpnpException("pas_http_core_404", 701)
+        if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.get_sort_capabilities()- (#echo(__LINE__)#)", self, context = "mp_server")
+        _return = UpnpException("pas_http_core_404", 701)
 
-		resource = Resource.load_cds_id("0", self.client_user_agent, self)
-		if (resource is not None): _return = resource.get_sort_capabilities()
+        resource = Resource.load_cds_id("0", self.client_user_agent, self)
+        if (resource is not None): _return = resource.get_sort_capabilities()
 
-		return _return
-	#
+        return _return
+    #
 
-	def get_version(self):
-	#
-		"""
+    def get_version(self):
+        """
 Returns the UPnP service type version.
 
 :return: (str) Service type version
 :since:  v0.1.00
-		"""
+        """
 
-		client_settings = self.get_client_settings()
-		is_versioning_supported = client_settings.get("upnp_spec_versioning_supported", True)
+        client_settings = self.get_client_settings()
+        is_versioning_supported = client_settings.get("upnp_spec_versioning_supported", True)
 
-		return (AbstractService.get_version(self) if (is_versioning_supported) else 1)
-	#
+        return (AbstractService.get_version(self) if (is_versioning_supported) else 1)
+    #
 
-	def init_host(self, device, service_id = None, configid = None):
-	#
-		"""
+    def init_host(self, device, service_id = None, configid = None):
+        """
 Initializes a host service.
 
 :param device: Host device this UPnP service is added to
@@ -114,149 +108,145 @@ Initializes a host service.
 
 :return: (bool) Returns true if initialization was successful.
 :since:  v0.1.00
-		"""
+        """
 
-		self.type = "ScheduledRecording"
-		self.upnp_domain = "schemas-upnp-org"
-		self.version = "2"
+        self.type = "ScheduledRecording"
+        self.upnp_domain = "schemas-upnp-org"
+        self.version = "2"
 
-		if (service_id is None): service_id = "ScheduledRecording"
+        if (service_id is None): service_id = "ScheduledRecording"
 
-		return AbstractService.init_host(self, device, service_id, configid)
-	#
+        return AbstractService.init_host(self, device, service_id, configid)
+    #
 
-	def _init_host_actions(self, device):
-	#
-		"""
+    def _init_host_actions(self, device):
+        """
 Initializes the dict of host service actions.
 
 :param device: Host device this UPnP service is added to
 
 :since: v0.1.00
-		"""
+        """
 
-		browse_record_schedules = { "argument_variables": [ { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" },
-		                                                    { "name": "StartingIndex", "variable": "A_ARG_TYPE_Index" },
-		                                                    { "name": "RequestedCount", "variable": "A_ARG_TYPE_Count" },
-		                                                    { "name": "SortCriteria", "variable": "A_ARG_TYPE_SortCriteria" }
-		                                                  ],
-		                            "return_variable": { "name": "Result", "variable": "A_ARG_TYPE_RecordSchedule" },
-		                            "result_variables": [ { "name": "NumberReturned", "variable": "A_ARG_TYPE_Count" },
-		                                                  { "name": "TotalMatches", "variable": "A_ARG_TYPE_Count" },
-		                                                  { "name": "UpdateID", "variable": "StateUpdateID" }
-		                                                ]
-		                          }
+        browse_record_schedules = { "argument_variables": [ { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" },
+                                                            { "name": "StartingIndex", "variable": "A_ARG_TYPE_Index" },
+                                                            { "name": "RequestedCount", "variable": "A_ARG_TYPE_Count" },
+                                                            { "name": "SortCriteria", "variable": "A_ARG_TYPE_SortCriteria" }
+                                                          ],
+                                    "return_variable": { "name": "Result", "variable": "A_ARG_TYPE_RecordSchedule" },
+                                    "result_variables": [ { "name": "NumberReturned", "variable": "A_ARG_TYPE_Count" },
+                                                          { "name": "TotalMatches", "variable": "A_ARG_TYPE_Count" },
+                                                          { "name": "UpdateID", "variable": "StateUpdateID" }
+                                                        ]
+                                  }
 
-		browse_record_tasks = { "argument_variables": [ { "name": "RecordScheduleID", "variable": "A_ARG_TYPE_ObjectID" },
-		                                                { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" },
-		                                                { "name": "StartingIndex", "variable": "A_ARG_TYPE_Index" },
-		                                                { "name": "RequestedCount", "variable": "A_ARG_TYPE_Count" },
-		                                                { "name": "SortCriteria", "variable": "A_ARG_TYPE_SortCriteria" }
-		                                              ],
-		                        "return_variable": { "name": "Result", "variable": "A_ARG_TYPE_RecordTask" },
-		                        "result_variables": [ { "name": "NumberReturned", "variable": "A_ARG_TYPE_Count" },
-		                                              { "name": "TotalMatches", "variable": "A_ARG_TYPE_Count" },
-		                                              { "name": "UpdateID", "variable": "StateUpdateID" }
-		                                            ]
-		                      }
+        browse_record_tasks = { "argument_variables": [ { "name": "RecordScheduleID", "variable": "A_ARG_TYPE_ObjectID" },
+                                                        { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" },
+                                                        { "name": "StartingIndex", "variable": "A_ARG_TYPE_Index" },
+                                                        { "name": "RequestedCount", "variable": "A_ARG_TYPE_Count" },
+                                                        { "name": "SortCriteria", "variable": "A_ARG_TYPE_SortCriteria" }
+                                                      ],
+                                "return_variable": { "name": "Result", "variable": "A_ARG_TYPE_RecordTask" },
+                                "result_variables": [ { "name": "NumberReturned", "variable": "A_ARG_TYPE_Count" },
+                                                      { "name": "TotalMatches", "variable": "A_ARG_TYPE_Count" },
+                                                      { "name": "UpdateID", "variable": "StateUpdateID" }
+                                                    ]
+                              }
 
-		create_record_schedule = { "argument_variables": [ { "name": "Elements", "variable": "A_ARG_TYPE_RecordScheduleParts" } ],
-		                           "return_variable": { "name": "RecordScheduleID", "variable": "A_ARG_TYPE_ObjectID" },
-		                           "result_variables": [ { "name": "Result", "variable": "A_ARG_TYPE_RecordSchedule" },
-		                                                 { "name": "UpdateID", "variable": "StateUpdateID" }
-		                                               ]
-		                         }
+        create_record_schedule = { "argument_variables": [ { "name": "Elements", "variable": "A_ARG_TYPE_RecordScheduleParts" } ],
+                                   "return_variable": { "name": "RecordScheduleID", "variable": "A_ARG_TYPE_ObjectID" },
+                                   "result_variables": [ { "name": "Result", "variable": "A_ARG_TYPE_RecordSchedule" },
+                                                         { "name": "UpdateID", "variable": "StateUpdateID" }
+                                                       ]
+                                 }
 
-		get_default_values = { "argument_variables": [ { "name": "DataTypeID", "variable": "A_ARG_TYPE_DataTypeID" },
-		                                               { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" }
-		                                             ],
-		                       "return_variable": { "name": "PropertyInfo", "variable": "A_ARG_TYPE_PropertyInfo" },
-		                       "result_variables": [ ]
-		                     }
+        get_default_values = { "argument_variables": [ { "name": "DataTypeID", "variable": "A_ARG_TYPE_DataTypeID" },
+                                                       { "name": "Filter", "variable": "A_ARG_TYPE_PropertyList" }
+                                                     ],
+                               "return_variable": { "name": "PropertyInfo", "variable": "A_ARG_TYPE_PropertyInfo" },
+                               "result_variables": [ ]
+                             }
 
-		self.actions = { "GetAllowedValues": get_default_values,
-		                 "BrowseRecordSchedules": browse_record_schedules,
-		                 "BrowseRecordTasks": browse_record_tasks,
-		                 "CreateRecordSchedule": create_record_schedule
-		               }
-	#
+        self.actions = { "GetAllowedValues": get_default_values,
+                         "BrowseRecordSchedules": browse_record_schedules,
+                         "BrowseRecordTasks": browse_record_tasks,
+                         "CreateRecordSchedule": create_record_schedule
+                       }
+    #
 
-	def _init_host_variables(self, device):
-	#
-		"""
+    def _init_host_variables(self, device):
+        """
 Initializes the dict of host service variables.
 
 :param device: Host device this UPnP service is added to
 
 :since: v0.1.00
-		"""
+        """
 
-		self.variables = { "SortCapabilities": { "is_sending_events": False,
-		                                         "is_multicasting_events": False,
-		                                         "type": "string"
-		                                       },
-		                   "SortLevelCapability": { "is_sending_events": False,
-		                                            "is_multicasting_events": False,
-		                                            "type": "ui4"
-		                                          },
-		                   "StateUpdateID": { "is_sending_events": False,
-		                                      "is_multicasting_events": False,
-		                                      "type": "ui4"
-		                                    },
-		                   "LastChange": { "is_sending_events": True,
-		                                   "is_multicasting_events": False,
-		                                   "type": "string"
-		                                 },
-		                   "A_ARG_TYPE_PropertyList": { "is_sending_events": False,
-		                                                "is_multicasting_events": False,
-		                                                "type": "string"
-		                                              },
-		                   "A_ARG_TYPE_DataTypeID": { "is_sending_events": False,
-		                                              "is_multicasting_events": False,
-		                                              "type": "string",
-		                                              "values_allowed": [ "A_ARG_TYPE_RecordSchedule",
-		                                                                  "A_ARG_TYPE_RecordTask",
-		                                                                  "A_ARG_TYPE_RecordScheduleParts"
-		                                                                ]
-		                                            },
-		                   "A_ARG_TYPE_ObjectID": { "is_sending_events": False,
-		                                            "is_multicasting_events": False,
-		                                            "type": "string"
-		                                          },
-		                   "A_ARG_TYPE_ObjectIDList": { "is_sending_events": False,
-		                                                "is_multicasting_events": False,
-		                                                "type": "string"
-		                                              },
-		                   "A_ARG_TYPE_PropertyInfo": { "is_sending_events": False,
-		                                                "is_multicasting_events": False,
-		                                                "type": "string"
-		                                              },
-		                   "A_ARG_TYPE_Index": { "is_sending_events": False,
-		                                         "is_multicasting_events": False,
-		                                         "type": "ui4"
-		                                       },
-		                   "A_ARG_TYPE_Count": { "is_sending_events": False,
-		                                         "is_multicasting_events": False,
-		                                         "type": "ui4"
-		                                       },
-		                   "A_ARG_TYPE_SortCriteria": { "is_sending_events": False,
-		                                                "is_multicasting_events": False,
-		                                                "type": "string"
-		                                              },
-		                   "A_ARG_TYPE_RecordSchedule": { "is_sending_events": False,
-		                                                  "is_multicasting_events": False,
-		                                                  "type": "string"
-		                                                },
-		                   "A_ARG_TYPE_RecordTask": { "is_sending_events": False,
-		                                              "is_multicasting_events": False,
-		                                              "type": "string"
-		                                            },
-		                   "A_ARG_TYPE_RecordScheduleParts": { "is_sending_events": False,
-		                                                       "is_multicasting_events": False,
-		                                                       "type": "string"
-		                                                     }
-		                 }
-	#
+        self.variables = { "SortCapabilities": { "is_sending_events": False,
+                                                 "is_multicasting_events": False,
+                                                 "type": "string"
+                                               },
+                           "SortLevelCapability": { "is_sending_events": False,
+                                                    "is_multicasting_events": False,
+                                                    "type": "ui4"
+                                                  },
+                           "StateUpdateID": { "is_sending_events": False,
+                                              "is_multicasting_events": False,
+                                              "type": "ui4"
+                                            },
+                           "LastChange": { "is_sending_events": True,
+                                           "is_multicasting_events": False,
+                                           "type": "string"
+                                         },
+                           "A_ARG_TYPE_PropertyList": { "is_sending_events": False,
+                                                        "is_multicasting_events": False,
+                                                        "type": "string"
+                                                      },
+                           "A_ARG_TYPE_DataTypeID": { "is_sending_events": False,
+                                                      "is_multicasting_events": False,
+                                                      "type": "string",
+                                                      "values_allowed": [ "A_ARG_TYPE_RecordSchedule",
+                                                                          "A_ARG_TYPE_RecordTask",
+                                                                          "A_ARG_TYPE_RecordScheduleParts"
+                                                                        ]
+                                                    },
+                           "A_ARG_TYPE_ObjectID": { "is_sending_events": False,
+                                                    "is_multicasting_events": False,
+                                                    "type": "string"
+                                                  },
+                           "A_ARG_TYPE_ObjectIDList": { "is_sending_events": False,
+                                                        "is_multicasting_events": False,
+                                                        "type": "string"
+                                                      },
+                           "A_ARG_TYPE_PropertyInfo": { "is_sending_events": False,
+                                                        "is_multicasting_events": False,
+                                                        "type": "string"
+                                                      },
+                           "A_ARG_TYPE_Index": { "is_sending_events": False,
+                                                 "is_multicasting_events": False,
+                                                 "type": "ui4"
+                                               },
+                           "A_ARG_TYPE_Count": { "is_sending_events": False,
+                                                 "is_multicasting_events": False,
+                                                 "type": "ui4"
+                                               },
+                           "A_ARG_TYPE_SortCriteria": { "is_sending_events": False,
+                                                        "is_multicasting_events": False,
+                                                        "type": "string"
+                                                      },
+                           "A_ARG_TYPE_RecordSchedule": { "is_sending_events": False,
+                                                          "is_multicasting_events": False,
+                                                          "type": "string"
+                                                        },
+                           "A_ARG_TYPE_RecordTask": { "is_sending_events": False,
+                                                      "is_multicasting_events": False,
+                                                      "type": "string"
+                                                    },
+                           "A_ARG_TYPE_RecordScheduleParts": { "is_sending_events": False,
+                                                               "is_multicasting_events": False,
+                                                               "type": "string"
+                                                             }
+                         }
+    #
 #
-
-##j## EOF

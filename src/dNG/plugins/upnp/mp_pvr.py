@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##j## BOF
 
 """
 MediaProvider
@@ -40,8 +39,7 @@ from dNG.runtime.exception_log_trap import ExceptionLogTrap
 from dNG.runtime.value_exception import ValueException
 
 def apply_value_derived_db_condition(params, last_return = None):
-#
-	"""
+    """
 Called for "mp.upnp.MpResource.applyValueDerivedDbCondition"
 
 :param params: Parameter specified
@@ -49,105 +47,94 @@ Called for "mp.upnp.MpResource.applyValueDerivedDbCondition"
 
 :return: (mixed) Return value
 :since:  v0.1.00
-	"""
+    """
 
-	if ("condition_definition" not in params
-	    or "value" not in params
-	   ): raise ValueException("Missing required arguments")
+    if ("condition_definition" not in params
+        or "value" not in params
+       ): raise ValueException("Missing required arguments")
 
-	condition_definition = params['condition_definition']
-	value = "{0}.".format(params['value'])
+    condition_definition = params['condition_definition']
+    value = "{0}.".format(params['value'])
 
-	is_generic_container = "object.container.".startswith(value)
-	is_video_container = "object.container.genre.movieGenre.".startswith(value)
+    is_generic_container = "object.container.".startswith(value)
+    is_video_container = "object.container.genre.movieGenre.".startswith(value)
 
-	if (is_generic_container or is_video_container):
-	#
-		and_condition_definition = ConditionDefinition(ConditionDefinition.AND)
+    if (is_generic_container or is_video_container):
+        and_condition_definition = ConditionDefinition(ConditionDefinition.AND)
 
-		and_condition_definition.add_exact_match_condition("cds_type", MpEntryPvrContainer.DB_CDS_TYPE_CONTAINER)
-		and_condition_definition.add_exact_match_condition("identity", "MpUpnpPvrContainerResource")
+        and_condition_definition.add_exact_match_condition("cds_type", MpEntryPvrContainer.DB_CDS_TYPE_CONTAINER)
+        and_condition_definition.add_exact_match_condition("identity", "MpUpnpPvrContainerResource")
 
-		condition_definition.add_sub_condition(and_condition_definition)
-	#
+        condition_definition.add_sub_condition(and_condition_definition)
+    #
 
-	return last_return
+    return last_return
 #
 
 def on_control_point_shutdown(params, last_return = None):
-#
-	"""
+    """
 Called for "dNG.pas.upnp.ControlPoint.onShutdown"
 
 :param params: Parameter specified
 :param last_return: The return value from the last hook called.
 
 :since: v0.1.00
-	"""
+    """
 
-	pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
+    pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
 
-	if (type(pvr_managers) is list):
-	#
-		for pvr_manager in pvr_managers:
-		#
-			with ExceptionLogTrap("mp_pvr"): pvr_manager.stop()
-		#
-	#
+    if (type(pvr_managers) is list):
+        for pvr_manager in pvr_managers:
+            with ExceptionLogTrap("mp_pvr"): pvr_manager.stop()
+        #
+    #
 
-	return last_return
+    return last_return
 #
 
 def on_control_point_startup(params, last_return = None):
-#
-	"""
+    """
 Called for "dNG.pas.upnp.ControlPoint.onStartup"
 
 :param params: Parameter specified
 :param last_return: The return value from the last hook called.
 
 :since: v0.1.00
-	"""
+    """
 
-	pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
+    pvr_managers = Hook.call("mp.pvr.Manager.getSingletons")
 
-	if (type(pvr_managers) is list):
-	#
-		for pvr_manager in pvr_managers:
-		#
-			with ExceptionLogTrap("mp_pvr"): pvr_manager.start()
-		#
-	#
+    if (type(pvr_managers) is list):
+        for pvr_manager in pvr_managers:
+            with ExceptionLogTrap("mp_pvr"): pvr_manager.start()
+        #
+    #
 
-	return last_return
+    return last_return
 #
 
 def register_plugin():
-#
-	"""
+    """
 Register plugin hooks.
 
 :since: v0.1.00
-	"""
+    """
 
-	Hook.register("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
-	Hook.register("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
+    Hook.register("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
+    Hook.register("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
 
-	Hook.register("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
+    Hook.register("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
 #
 
 def unregister_plugin():
-#
-	"""
+    """
 Unregister plugin hooks.
 
 :since: v0.1.00
-	"""
+    """
 
-	Hook.unregister("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
-	Hook.unregister("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
+    Hook.unregister("dNG.pas.upnp.ControlPoint.onShutdown", on_control_point_shutdown)
+    Hook.unregister("dNG.pas.upnp.ControlPoint.onStartup", on_control_point_startup)
 
-	Hook.unregister("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
+    Hook.unregister("mp.upnp.MpResource.applyValueDerivedDbCondition", apply_value_derived_db_condition)
 #
-
-##j## EOF

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##j## BOF
 
 """
 MediaProvider
@@ -37,8 +36,7 @@ from sqlalchemy.types import VARCHAR
 from .mp_upnp_resource import MpUpnpResource
 
 class MpUpnpPvrContainerResource(MpUpnpResource):
-#
-	"""
+    """
 "MpUpnpPvrContainerResource" represents an database UPnP PVR container
 entry.
 s
@@ -49,35 +47,33 @@ s
 :since:      v0.1.00
 :license:    https://www.direct-netware.de/redirect?licenses;gpl
              GNU General Public License 2
-	"""
+    """
 
-	__tablename__ = "{0}_mp_upnp_pvr_container_resource".format(MpUpnpResource.get_table_prefix())
-	"""
+    __tablename__ = "{0}_mp_upnp_pvr_container_resource".format(MpUpnpResource.get_table_prefix())
+    """
 SQLAlchemy table name
-	"""
-	db_instance_class = "dNG.data.upnp.resources.MpEntryPvrContainer"
-	"""
+    """
+    db_instance_class = "dNG.data.upnp.resources.MpEntryPvrContainer"
+    """
 Encapsulating SQLAlchemy database instance class name
-	"""
-	db_schema_version = 1
-	"""
+    """
+    db_schema_version = 1
+    """
 Database schema version
-	"""
+    """
 
-	id = Column(VARCHAR(32), ForeignKey(MpUpnpResource.id), primary_key = True)
-	"""
+    id = Column(VARCHAR(32), ForeignKey(MpUpnpResource.id), primary_key = True)
+    """
 mp_upnp_pvr_container_resource.id
-	"""
-	manager_id = Column(VARCHAR(255), index = True)
-	"""
+    """
+    manager_id = Column(VARCHAR(255), index = True)
+    """
 mp_upnp_pvr_container_resource.manager_id
-	"""
+    """
 
-	__mapper_args__ = { "polymorphic_identity": "MpUpnpPvrContainerResource" }
-	"""
+    __mapper_args__ = { "polymorphic_identity": "MpUpnpPvrContainerResource" }
+    """
 sqlalchemy.org: Other options are passed to mapper() using the
 __mapper_args__ class variable.
-	"""
+    """
 #
-
-##j## EOF

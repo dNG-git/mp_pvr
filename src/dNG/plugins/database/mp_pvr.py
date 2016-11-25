@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##j## BOF
 
 """
 MediaProvider
@@ -38,8 +37,7 @@ from dNG.module.named_loader import NamedLoader
 from dNG.plugins.hook import Hook
 
 def after_apply_schema(params, last_return = None):
-#
-	"""
+    """
 Called for "dNG.pas.Database.applySchema.after"
 
 :param params: Parameter specified
@@ -47,20 +45,19 @@ Called for "dNG.pas.Database.applySchema.after"
 
 :return: (mixed) Return value
 :since:  v0.1.00
-	"""
+    """
 
-	container_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
-	Schema.apply_version(container_class)
+    container_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
+    Schema.apply_version(container_class)
 
-	resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
-	Schema.apply_version(resource_class)
+    resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
+    Schema.apply_version(resource_class)
 
-	return last_return
+    return last_return
 #
 
 def before_apply_schema(params, last_return = None):
-#
-	"""
+    """
 Called for "dNG.pas.Database.applySchema.before"
 
 :param params: Parameter specified
@@ -68,55 +65,50 @@ Called for "dNG.pas.Database.applySchema.before"
 
 :return: (mixed) Return value
 :since:  v0.1.00
-	"""
+    """
 
-	resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
-	if (resource_class is not None): resource_class.before_apply_schema()
+    resource_class = NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
+    if (resource_class is not None): resource_class.before_apply_schema()
 
-	return last_return
+    return last_return
 #
 
 def load_all(params, last_return = None):
-#
-	"""
+    """
 Load and register all SQLAlchemy objects to generate database tables.
 
 :param params: Parameter specified
 :param last_return: The return value from the last hook called.
 
 :since: v0.1.00
-	"""
+    """
 
-	NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
-	NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
+    NamedLoader.get_class("dNG.database.instances.MpUpnpPvrContainerResource")
+    NamedLoader.get_class("dNG.database.instances.MpUpnpPvrRecordingResource")
 
-	return last_return
+    return last_return
 #
 
 def register_plugin():
-#
-	"""
+    """
 Register plugin hooks.
 
 :since: v0.1.00
-	"""
+    """
 
-	Hook.register("dNG.pas.Database.applySchema.after", after_apply_schema)
-	Hook.register("dNG.pas.Database.applySchema.before", before_apply_schema)
-	Hook.register("dNG.pas.Database.loadAll", load_all)
+    Hook.register("dNG.pas.Database.applySchema.after", after_apply_schema)
+    Hook.register("dNG.pas.Database.applySchema.before", before_apply_schema)
+    Hook.register("dNG.pas.Database.loadAll", load_all)
 #
 
 def unregister_plugin():
-#
-	"""
+    """
 Unregister plugin hooks.
 
 :since: v0.1.00
-	"""
+    """
 
-	Hook.unregister("dNG.pas.Database.applySchema.after", after_apply_schema)
-	Hook.unregister("dNG.pas.Database.applySchema.before", before_apply_schema)
-	Hook.unregister("dNG.pas.Database.loadAll", load_all)
+    Hook.unregister("dNG.pas.Database.applySchema.after", after_apply_schema)
+    Hook.unregister("dNG.pas.Database.applySchema.before", before_apply_schema)
+    Hook.unregister("dNG.pas.Database.loadAll", load_all)
 #
-
-##j## EOF
